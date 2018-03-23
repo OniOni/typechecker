@@ -1,6 +1,14 @@
 import typing
 
 
+def get_needed_methods(hint):
+    return {
+        m
+        for b in hint.mro() if hasattr(b, '__abstractmethods__')
+        for m in b.__abstractmethods__
+    }
+
+
 def valid(o: typing.Any, hint) -> bool:
     if hint == type(None):
         return o is None
@@ -15,7 +23,7 @@ def valid(o: typing.Any, hint) -> bool:
         a, b = hint.__args__
         return valid(o, a) or valid(o, b)
 
-    needed_methods = {m for b in hint.mro() if hasattr(b, '__abstractmethods__') for m in b.__abstractmethods__}
+    needed_methods = get_needed_methods(hint)
     duck_typed = all([hasattr(o, k) for k in needed_methods])
 
     if not duck_typed:
