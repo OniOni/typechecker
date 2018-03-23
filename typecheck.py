@@ -36,11 +36,17 @@ def valid(o: typing.Any, hint) -> bool:
                 valid(k, key_type) and valid(v, value_type)
                 for k, v in o.items()
             ])
-        else:
+        elif len(hint.__args__) == 1:
             t = hint.__args__[0]
             return all([
                 valid(e, t)
                 for e in o
+            ])
+        else:
+            t = hint.__args__
+            return all([
+                valid(o[i], a)
+                for i, a in enumerate(t)
             ])
 
 
@@ -58,15 +64,17 @@ class Mine:
     c: str
     d: typing.Dict[str, int]
     l: typing.List[str]
+    t: typing.Tuple[int, str, int]
     opt: typing.Optional[int]
 
-    def __init__(self, i, c, d, l, opt=None):
+    def __init__(self, i, c, d, l, t, opt=None):
         self.i = i
         self.c = c
         self.d = d
         self.l = l
+        self.t = t
         self.opt = opt
 
 
-m = Mine(42, 'lol', {'k': 42}, ['lol'])
+m = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
 typecheck(m)
