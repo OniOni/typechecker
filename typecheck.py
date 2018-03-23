@@ -53,10 +53,12 @@ def valid(o: typing.Any, hint) -> bool:
 def typecheck(obj: typing.Any) -> bool:
     annotations = typing.get_type_hints(obj)
 
-    print({
+    is_valid = {
         k: valid(getattr(obj, k), v)
         for k, v in annotations.items()
-    })
+    }
+    print(is_valid)
+    return all(is_valid.values())
 
 
 class Mine:
@@ -76,5 +78,8 @@ class Mine:
         self.opt = opt
 
 
-m = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
-typecheck(m)
+if __name__ == '__main__':
+    m = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
+
+    assert typecheck(m)
+    assert not typecheck(Mine('', 'lol', {'k': 42}, ['lol'], (1, 'l', 1)))
