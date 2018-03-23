@@ -1,32 +1,41 @@
 import typing
 
 
-def valid(obj, hint):
+def valid(o: typing.Any, hint) -> bool:
+    if type(hint) == type:
+        try:
+            return hint(o) == o
+        except Exception:
+            return False
+
     if type(hint) == type(typing.Union):
         a, b = hint.__args__
-        return valid(obj, a) or valid(obj, b)
-    elif type(hint) == type(typing.Collection):
+        return valid(o, a) or valid(o, b)
+
+    needed_methods = {m for b in hint.mro() if hasattr(b, '__abstractmethods__') for m in b.__abstractmethods__}
+    duck_typed = all([hasattr(o, k) for k in needed_methods])
+
+    if not duck_typed:
+        return False
+
+    if hint.__args__:
         if len(hint.__args__) == 2:
-            a, b = hint.__args__
+            key_type, value_type = hint.__args__
             return all([
-                valid(k, a) and valid(v, b)
-                for k, v in obj.items()
+                valid(k, key_type) and valid(v, value_type)
+                for k, v in o.items()
             ])
         else:
-            print(hint, obj)
-            a = hint.__args__
+            t = hint.__args__[0]
             return all([
-                valid(k, a)
-                for k in obj
+                valid(e, t)
+                for e in o
             ])
 
-    return isinstance(obj, hint)
 
-
-def typecheck(obj):
+def typecheck(obj: typing.Any) -> bool:
     annotations = typing.get_type_hints(obj)
 
-    print(annotations)
     print({
         k: valid(getattr(obj, k), v)
         for k, v in annotations.items()
