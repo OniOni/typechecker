@@ -2,6 +2,9 @@ import typing
 
 
 def valid(o: typing.Any, hint) -> bool:
+    if hint == type(None):
+        return o is None
+
     if type(hint) == type:
         try:
             return hint(o) == o
