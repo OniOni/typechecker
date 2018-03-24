@@ -9,6 +9,37 @@ def get_needed_methods(hint):
     }
 
 
+def quacks(o, hint) -> bool:
+    needed_methods = get_needed_methods(hint)
+    return all([
+        hasattr(o, k) for k in needed_methods
+    ])
+
+
+def _check_mapping_style(o, hint):
+    key_type, value_type = hint.__args__
+    return all([
+        valid(k, key_type) and valid(v, value_type)
+        for k, v in o.items()
+    ])
+
+
+def _check_tuple_style(o, hint):
+    t = hint.__args__
+    return all([
+        valid(o[i], a)
+        for i, a in enumerate(t)
+    ])
+
+
+def _check_list_style(o, hint):
+    t = hint.__args__[0]
+    return all([
+        valid(e, t)
+        for e in o
+    ])
+
+
 def valid(o: typing.Any, hint) -> bool:
     if hint == type(None):
         return o is None
@@ -19,35 +50,23 @@ def valid(o: typing.Any, hint) -> bool:
         except Exception:
             return False
 
-    if type(hint) == type(typing.Union):
+    if hasattr(hint, '__base__'):
+        return isinstance(o, hint.__base__)
+
+    if isinstance(typing.Union, type(typing.Union)):
         a, b = hint.__args__
         return valid(o, a) or valid(o, b)
 
-    needed_methods = get_needed_methods(hint)
-    duck_typed = all([hasattr(o, k) for k in needed_methods])
-
-    if not duck_typed:
-        return False
-
     if hint.__args__:
         if len(hint.__args__) == 2:
-            key_type, value_type = hint.__args__
-            return all([
-                valid(k, key_type) and valid(v, value_type)
-                for k, v in o.items()
-            ])
+            return _check_mapping_style(o, hint) or _check_mapping_style(o, hint)
         elif len(hint.__args__) == 1:
-            t = hint.__args__[0]
-            return all([
-                valid(e, t)
-                for e in o
-            ])
+            return _check_list_style(o, hint)
         else:
-            t = hint.__args__
-            return all([
-                valid(o[i], a)
-                for i, a in enumerate(t)
-            ])
+            return _check_tuple_style(o, hint)
+
+    if not quacks(o, hint):
+        return False
 
 
 def typecheck(obj: typing.Any) -> bool:
@@ -79,7 +98,7 @@ class Mine:
 
 
 if __name__ == '__main__':
-    m = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
-
-    assert typecheck(m)
-    assert not typecheck(Mine('', 'lol', {'k': 42}, ['lol'], (1, 'l', 1)))
+    good = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
+    bad = Mine('', 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
+    assert typecheck(good), f'{good} should be valid.'
+    assert not typecheck(bad), f'{bad} should not be valid.'
