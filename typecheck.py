@@ -51,7 +51,7 @@ def valid(o: typing.Any, hint) -> bool:
         if hint.__args__:
             has_args = True
             if len(hint.__args__) == 2:
-                valid_args = _check_mapping_style(o, hint) or _check_mapping_style(o, hint)
+                valid_args = _check_mapping_style(o, hint) or _check_tuple_style(o, hint)
             elif len(hint.__args__) == 1:
                 valid_args = _check_list_style(o, hint)
             else:
