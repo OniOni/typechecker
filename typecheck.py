@@ -96,5 +96,8 @@ class Mine:
 if __name__ == '__main__':
     good = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
     bad = Mine('', 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
+    bad_args = Mine('', 'lol', {'k': 42}, ['lol', 1], (1, 'l', 1))
+
     assert typecheck(good), f'{good} should be valid.'
     assert not typecheck(bad), f'{bad} should not be valid.'
+    assert not typecheck(bad_args), f'{bad_args} should not be valid.'
