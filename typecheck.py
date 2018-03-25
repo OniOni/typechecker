@@ -53,7 +53,7 @@ def valid(o: typing.Any, hint) -> bool:
     if hasattr(hint, '__base__'):
         return isinstance(o, hint.__base__)
 
-    if isinstance(typing.Union, type(typing.Union)):
+    if isinstance(hint, type(typing.Union)):
         a, b = hint.__args__
         return valid(o, a) or valid(o, b)
 
