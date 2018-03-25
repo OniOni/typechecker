@@ -44,8 +44,7 @@ def valid(o: typing.Any, hint) -> bool:
     if type(hint) == type:
         return isinstance(o, hint)
     elif isinstance(hint, type(typing.Union)):
-        a, b = hint.__args__
-        return valid(o, a) or valid(o, b)
+        return any(valid(o, h) for h in hint.__args__)
     else:
         has_args = False
         if hint.__args__:
