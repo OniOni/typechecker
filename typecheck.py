@@ -41,32 +41,28 @@ def _check_list_style(o, hint):
 
 
 def valid(o: typing.Any, hint) -> bool:
-    if hint == type(None):
-        return o is None
-
     if type(hint) == type:
-        try:
-            return hint(o) == o
-        except Exception:
-            return False
-
-    if hasattr(hint, '__base__'):
-        return isinstance(o, hint.__base__)
-
-    if isinstance(hint, type(typing.Union)):
+        return isinstance(o, hint)
+    elif isinstance(hint, type(typing.Union)):
         a, b = hint.__args__
         return valid(o, a) or valid(o, b)
+    else:
+        has_args = False
+        if hint.__args__:
+            has_args = True
+            if len(hint.__args__) == 2:
+                valid_args = _check_mapping_style(o, hint) or _check_mapping_style(o, hint)
+            elif len(hint.__args__) == 1:
+                valid_args = _check_list_style(o, hint)
+            else:
+                valid_args = _check_tuple_style(o, hint)
 
-    if hint.__args__:
-        if len(hint.__args__) == 2:
-            return _check_mapping_style(o, hint) or _check_mapping_style(o, hint)
-        elif len(hint.__args__) == 1:
-            return _check_list_style(o, hint)
+        if hasattr(hint, '__base__'):
+            instance = isinstance(o, hint.__base__)
+            if has_args:
+                return instance and valid_args
         else:
-            return _check_tuple_style(o, hint)
-
-    if not quacks(o, hint):
-        return False
+            return quacks(o, hint)
 
 
 def typecheck(obj: typing.Any) -> bool:
