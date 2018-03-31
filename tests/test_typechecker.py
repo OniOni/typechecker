@@ -22,9 +22,15 @@ class Mine:
 
 def test_simple():
     good = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
-    bad = Mine('', 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
-    bad_args = Mine('', 'lol', {'k': 42}, ['lol', 1], (1, 'l', 1))
 
-    assert typecheck(good), f'{good} should be valid.'
-    assert not typecheck(bad), f'{bad} should not be valid.'
-    assert not typecheck(bad_args), f'{bad_args} should not be valid.'
+    assert typecheck(good)
+
+
+def test_bad_type():
+    bad = Mine('', 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
+    assert not typecheck(bad)
+
+
+def test_bad_args():
+    bad_args = Mine('', 'lol', {'k': 42}, ['lol', 1], (1, 'l', 1))
+    assert not typecheck(bad_args)
