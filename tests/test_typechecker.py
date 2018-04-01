@@ -7,22 +7,21 @@ class Mine:
     i: int
     c: str
     d: typing.Dict[str, int]
-    l: typing.List[str]
+    li: typing.List[str]
     t: typing.Tuple[int, str, int]
     opt: typing.Optional[int]
 
-    def __init__(self, i, c, d, l, t, opt=None):
+    def __init__(self, i, c, d, li, t, opt=None):
         self.i = i
         self.c = c
         self.d = d
-        self.l = l
+        self.li = li
         self.t = t
         self.opt = opt
 
 
 def test_simple():
     good = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
-
     assert typecheck(good)
 
 
