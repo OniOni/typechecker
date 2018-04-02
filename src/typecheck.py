@@ -19,7 +19,7 @@ def quacks(o, hint) -> bool:
 def _check_mapping_style(o, hint):
     key_type, value_type = hint.__args__
     return all([
-        valid(k, key_type) and valid(v, value_type)
+        typecheck(k, key_type) and typecheck(v, value_type)
         for k, v in o.items()
     ])
 
@@ -27,7 +27,7 @@ def _check_mapping_style(o, hint):
 def _check_tuple_style(o, hint):
     t = hint.__args__
     return all([
-        valid(o[i], a)
+        typecheck(o[i], a)
         for i, a in enumerate(t)
     ])
 
@@ -35,41 +35,41 @@ def _check_tuple_style(o, hint):
 def _check_list_style(o, hint):
     t = hint.__args__[0]
     return all([
-        valid(e, t)
+        typecheck(e, t)
         for e in o
     ])
 
 
-def valid(o: typing.Any, hint) -> bool:
-    if type(hint) == type:
+def typecheck(o: typing.Any, hint=None) -> bool:
+    if hasattr(o, '__annotations__'):
+        annotations = typing.get_type_hints(o)
+
+        return all([
+            typecheck(getattr(o, k), v)
+            for k, v in annotations.items()
+        ])
+    elif type(hint) == type:
         return isinstance(o, hint)
     elif isinstance(hint, type(typing.Union)):
-        return any(valid(o, h) for h in hint.__args__)
+        return any(typecheck(o, h) for h in hint.__args__)
     else:
         has_args = False
         if hint.__args__:
             has_args = True
             if len(hint.__args__) == 2:
-                valid_args = _check_mapping_style(o, hint) or _check_tuple_style(o, hint)
+                typecheck_args = _check_mapping_style(o, hint) or _check_tuple_style(o, hint)
             elif len(hint.__args__) == 1:
-                valid_args = _check_list_style(o, hint)
+                typecheck_args = _check_list_style(o, hint)
             else:
-                valid_args = _check_tuple_style(o, hint)
+                typecheck_args = _check_tuple_style(o, hint)
 
         if hasattr(hint, '__base__'):
             instance = isinstance(o, hint.__base__)
             if has_args:
-                return instance and valid_args
+                return instance and typecheck_args
         else:
             return quacks(o, hint)
 
+    return False
 
-def typecheck(obj: typing.Any) -> bool:
-    annotations = typing.get_type_hints(obj)
 
-    is_valid = {
-        k: valid(getattr(obj, k), v)
-        for k, v in annotations.items()
-    }
-    print(is_valid)
-    return all(is_valid.values())
