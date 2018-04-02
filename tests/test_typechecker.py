@@ -33,3 +33,57 @@ def test_bad_type():
 def test_bad_args():
     bad_args = Mine('', 'lol', {'k': 42}, ['lol', 1], (1, 'l', 1))
     assert not typecheck(bad_args)
+
+
+def test_nested_obj():
+    class Inner:
+        i: int
+
+        def __init__(self, i):
+            self.i = i
+
+    class Outer:
+        inner: Inner
+
+        def __init__(self, inner):
+            self.inner = inner
+
+    m = Outer(Inner(42))
+
+    assert typecheck(m)
+
+
+def test_nested_obj_bad():
+    class Inner:
+        i: int
+
+        def __init__(self, i):
+            self.i = i
+
+    class Outer:
+        inner: Inner
+
+        def __init__(self, inner):
+            self.inner = inner
+
+    m = Outer(42)
+
+    assert not typecheck(m)
+
+
+def test_nested_obj_bad_inner():
+    class Inner:
+        i: int
+
+        def __init__(self, i):
+            self.i = i
+
+    class Outer:
+        inner: Inner
+
+        def __init__(self, inner):
+            self.inner = inner
+
+    m = Outer(Inner('lol'))
+
+    assert not typecheck(m)
