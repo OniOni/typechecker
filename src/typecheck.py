@@ -41,35 +41,26 @@ def _check_list_style(o, hint):
 
 
 def typecheck(o: typing.Any, hint=None) -> bool:
-    if hasattr(o, '__annotations__'):
-        annotations = typing.get_type_hints(o)
+    origin = typing.get_origin(hint)
+    if origin:
+        if origin is typing.Union:
+            return any(typecheck(o, h) for h in typing.get_args(hint))
+        elif issubclass(origin, typing.Mapping):
+            return _check_mapping_style(o, hint)
+        elif issubclass(origin, typing.MutableSequence):
+            return _check_list_style(o, hint)
+        elif issubclass(origin, typing.Sequence):
+            return _check_tuple_style(o, hint)
+    elif type(hint) == type and hint in (str, int, bool):
+        return isinstance(o, hint)
+    elif hint == type(None):
+        return o is None
 
+    try:
+        hint = typing.get_type_hints(o)
         return all([
             typecheck(getattr(o, k), v)
-            for k, v in annotations.items()
+            for k, v in hint.items()
         ])
-    elif type(hint) == type:
-        return isinstance(o, hint)
-    elif isinstance(hint, type(typing.Union)):
-        return any(typecheck(o, h) for h in hint.__args__)
-    else:
-        has_args = False
-        if hint.__args__:
-            has_args = True
-            if len(hint.__args__) == 2:
-                typecheck_args = _check_mapping_style(o, hint) or _check_tuple_style(o, hint)
-            elif len(hint.__args__) == 1:
-                typecheck_args = _check_list_style(o, hint)
-            else:
-                typecheck_args = _check_tuple_style(o, hint)
-
-        if hasattr(hint, '__base__'):
-            instance = isinstance(o, hint.__base__)
-            if has_args:
-                return instance and typecheck_args
-        else:
-            return quacks(o, hint)
-
-    return False
-
-
+    except TypeError:
+        return False
