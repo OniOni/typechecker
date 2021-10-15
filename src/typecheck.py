@@ -1,4 +1,7 @@
 import typing
+import inspect
+
+from functools import wraps
 
 
 def get_needed_methods(hint):
@@ -38,6 +41,23 @@ def _check_list_style(o, hint):
         typecheck(e, t)
         for e in o
     ])
+
+
+def type_guard(f):
+
+    @wraps(f)
+    def inner(*a, **k):
+        (bind := inspect.signature(f).bind(*a, **k)).apply_defaults()
+        hints = typing.get_type_hints(f)
+
+        assert all([
+            typecheck(bind.arguments[k], v)
+            for k, v in hints.items()
+        ])
+
+        return f(*a, *k)
+
+    return inner
 
 
 def typecheck(o: typing.Any, hint=None) -> bool:
