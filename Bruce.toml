@@ -33,6 +33,11 @@ cmd = 'venv/bin/isort --skip venv --ac src/ bruce.py'
 watch = ['py']
 upstream = ['deps']
 
+[task.flake8]
+cmd = 'venv/bin/flake8 src/'
+watch = ['py']
+upstream = ['deps']
+
 [task.dev-install]
 cmd = 'venv/bin/pip install -e .'
 watch = ['py']
@@ -44,4 +49,10 @@ upstream = ['deps', 'dev-install']
 watch = ['py']
 
 [group.qa]
-upstream = ['black', 'isort']
+upstream = ['black', 'isort', 'flake8']
+
+[group.dev]
+upstream = ['qa', 'test']
+
+[group.ci]
+upstream = ['flake8', 'test']
