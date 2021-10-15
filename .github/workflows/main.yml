@@ -25,4 +25,4 @@ jobs:
           key: ${{ runner.os }}-bruce
 
       - name: Test
-        run: ./bruce.py test
+        run: ./bruce.py ci
