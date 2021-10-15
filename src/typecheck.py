@@ -60,7 +60,7 @@ def typecheck(o: typing.Any, hint=None) -> bool:
             return _check_tuple_style(o, hint)
     elif type(hint) == type and hint in (str, int, bool):
         return isinstance(o, hint)
-    elif hint == type(None):
+    elif hint == type(None):  # noqa
         return o is None
 
     try:
