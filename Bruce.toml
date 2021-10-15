@@ -24,7 +24,12 @@ watch = ['reqs']
 upstream = ['init']
 
 [task.black]
-cmd = 'venv/bin/black src/python --exclude venv bruce.py'
+cmd = 'venv/bin/black src/ --exclude venv bruce.py'
+watch = ['py']
+upstream = ['deps']
+
+[task.isort]
+cmd = 'venv/bin/isort --skip venv --ac src/ bruce.py'
 watch = ['py']
 upstream = ['deps']
 
@@ -37,3 +42,6 @@ upstream = ['init']
 cmd = 'venv/bin/pytest'
 upstream = ['deps', 'dev-install']
 watch = ['py']
+
+[group.qa]
+upstream = ['black', 'isort']
