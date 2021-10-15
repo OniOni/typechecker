@@ -1,6 +1,7 @@
 import typing
+import pytest
 
-from typecheck import typecheck
+from typecheck import typecheck, type_guard
 
 
 class Mine:
@@ -87,3 +88,22 @@ def test_nested_obj_bad_inner():
     m = Outer(Inner('lol'))
 
     assert not typecheck(m)
+
+
+def test_guard_bad():
+
+    @type_guard
+    def f(a: int, b: str, c: bool = False):
+        return True
+
+    with pytest.raises(AssertionError):
+        f(42, 42)
+
+
+def test_guard():
+
+    @type_guard
+    def f(a: int, b: str, c: bool = False):
+        return True
+
+    assert f(42, 'lol')
