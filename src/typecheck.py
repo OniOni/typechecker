@@ -1,59 +1,46 @@
-import typing
 import inspect
-
+import typing
 from functools import wraps
 
 
 def get_needed_methods(hint):
     return {
         m
-        for b in hint.mro() if hasattr(b, '__abstractmethods__')
+        for b in hint.mro()
+        if hasattr(b, "__abstractmethods__")
         for m in b.__abstractmethods__
     }
 
 
 def quacks(o, hint) -> bool:
     needed_methods = get_needed_methods(hint)
-    return all([
-        hasattr(o, k) for k in needed_methods
-    ])
+    return all([hasattr(o, k) for k in needed_methods])
 
 
 def _check_mapping_style(o, hint):
     key_type, value_type = hint.__args__
-    return all([
-        typecheck(k, key_type) and typecheck(v, value_type)
-        for k, v in o.items()
-    ])
+    return all(
+        [typecheck(k, key_type) and typecheck(v, value_type) for k, v in o.items()]
+    )
 
 
 def _check_tuple_style(o, hint):
     t = hint.__args__
-    return all([
-        typecheck(o[i], a)
-        for i, a in enumerate(t)
-    ])
+    return all([typecheck(o[i], a) for i, a in enumerate(t)])
 
 
 def _check_list_style(o, hint):
     t = hint.__args__[0]
-    return all([
-        typecheck(e, t)
-        for e in o
-    ])
+    return all([typecheck(e, t) for e in o])
 
 
 def type_guard(f):
-
     @wraps(f)
     def inner(*a, **k):
         (bind := inspect.signature(f).bind(*a, **k)).apply_defaults()
         hints = typing.get_type_hints(f)
 
-        assert all([
-            typecheck(bind.arguments[k], v)
-            for k, v in hints.items()
-        ])
+        assert all([typecheck(bind.arguments[k], v) for k, v in hints.items()])
 
         return f(*a, *k)
 
@@ -78,9 +65,6 @@ def typecheck(o: typing.Any, hint=None) -> bool:
 
     try:
         hint = typing.get_type_hints(o)
-        return all([
-            typecheck(getattr(o, k), v)
-            for k, v in hint.items()
-        ])
+        return all([typecheck(getattr(o, k), v) for k, v in hint.items()])
     except TypeError:
         return False
