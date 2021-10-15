@@ -1,0 +1,39 @@
+[glob.py]
+fingerprintingstrategy = 'content'
+glob = '**/*.py'
+exclude = ['.*venv.*', '\.bruce/.*']
+
+[file.reqs]
+fingerprintingstrategy = 'content'
+path = 'requirements.txt'
+
+[file.venv]
+path = 'venv'
+
+[task.clean]
+cmd = 'rm -rf venv/ __pycache__/ build/ dist/ *egg*'
+watch = ['venv']
+
+[task.init]
+cmd = 'python3 -m venv venv'
+watch = ['venv']
+
+[task.deps]
+cmd = 'venv/bin/pip install -r requirements.txt'
+watch = ['reqs']
+upstream = ['init']
+
+[task.black]
+cmd = 'venv/bin/black src/python --exclude venv bruce.py'
+watch = ['py']
+upstream = ['deps']
+
+[task.dev-install]
+cmd = 'venv/bin/pip install -e .'
+watch = ['py']
+upstream = ['init']
+
+[task.test]
+cmd = 'venv/bin/pytest'
+upstream = ['deps', 'dev-install']
+watch = ['py']
