@@ -18,19 +18,19 @@ def quacks(o, hint) -> bool:
 
 
 def _check_mapping_style(o, hint):
-    key_type, value_type = hint.__args__
+    key_type, value_type = typing.get_args(hint)
     return all(
         [typecheck(k, key_type) and typecheck(v, value_type) for k, v in o.items()]
     )
 
 
 def _check_tuple_style(o, hint):
-    t = hint.__args__
+    t = typing.get_args(hint)
     return all([typecheck(o[i], a) for i, a in enumerate(t)])
 
 
 def _check_list_style(o, hint):
-    t = hint.__args__[0]
+    t = typing.get_args(hint)[0]
     return all([typecheck(e, t) for e in o])
 
 
