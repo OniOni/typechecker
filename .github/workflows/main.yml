@@ -19,16 +19,21 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          path: |
+            .bruce/
+            .venv/
+          key: ${{ runner.os }}-${{ matri}}-bruce
+      - name: "Setup Python: ${{ matrix.python-version }}"
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Cache
         uses: actions/cache@v2.1.6
         with:
           path: |
             .bruce/
             .venv/
-          key: ${{ runner.os }}-bruce
-      - name: "Setup Python: ${{ matrix.python-version }}"
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
+          key: ${{ runner.os }}-${{ matrix.python-version }}-bruce
       - name: Test
         run: ./bruce.py ci
