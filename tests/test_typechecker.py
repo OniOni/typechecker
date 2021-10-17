@@ -11,19 +11,24 @@ class Mine:
     d: typing.Dict[str, int]
     li: typing.List[str]
     t: typing.Tuple[int, str, int]
+    u: typing.Union[str, int]
     opt: typing.Optional[int]
 
-    def __init__(self, i, c, d, li, t, opt=None):
+    def __init__(self, i, c, d, li, t, u=42, opt=None):
         self.i = i
         self.c = c
         self.d = d
         self.li = li
         self.t = t
+        self.u = u
         self.opt = opt
 
 
 def test_simple():
-    good = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1))
+    good = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1), 42)
+    assert typecheck(good)
+
+    good = Mine(42, 'lol', {'k': 42}, ['lol'], (1, 'l', 1), 'lol')
     assert typecheck(good)
 
 
@@ -120,3 +125,11 @@ def test_dataclass():
     assert typecheck(T(i=42, s='lol'))
     assert not typecheck(T(i='lol', s='lol'))
     assert not typecheck(T(i=42, s=42))
+
+
+def test_union():
+    T = typing.Union[str, int]
+
+    assert typecheck(42, T)
+    assert typecheck('lol', T)
+    assert not typecheck(b'lol', T)
