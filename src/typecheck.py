@@ -30,8 +30,15 @@ def _check_tuple_style(o, hint):
 
 
 def _check_list_style(o, hint):
-    t = typing.get_args(hint)[0]
-    return all([typecheck(e, t) for e in o])
+    args = typing.get_args(hint)
+    if len(args) == 0:
+        return isinstance(o, hint)
+    elif len(args) == 1:
+        return all([typecheck(e, args[0]) for e in o])
+    else:
+        raise TypeError(
+            f"Too many parametres for {hint}; actual {len(args)}, expected 1."
+        )
 
 
 def type_guard(f):
@@ -57,7 +64,9 @@ def typecheck(o: typing.Any, hint=None) -> bool:
             return _check_list_style(o, hint)
         elif issubclass(origin, typing.Sequence):
             return _check_tuple_style(o, hint)
-    elif type(hint) == type and hint in (str, int, bool, bytes):
+        else:
+            return quacks(o, hint)
+    elif type(hint) == type and hint in (str, int, bool, bytes, list, dict):
         return isinstance(o, hint)
     elif hint == type(None):  # noqa
         return o is None
