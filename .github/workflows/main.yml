@@ -11,11 +11,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.9', '3.10' ]
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Cache
         uses: actions/cache@v2.1.6
         with:
@@ -23,6 +26,9 @@ jobs:
             .bruce/
             .venv/
           key: ${{ runner.os }}-bruce
-
+      - name: "Setup Python: ${{ matrix.python-version }}"
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
       - name: Test
         run: ./bruce.py ci
