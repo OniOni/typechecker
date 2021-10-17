@@ -1,3 +1,4 @@
+import dataclasses
 import typing
 import pytest
 
@@ -107,3 +108,15 @@ def test_guard():
         return True
 
     assert f(42, 'lol')
+
+
+def test_dataclass():
+
+    @dataclasses.dataclass
+    class T:
+        i: int
+        s: str
+
+    assert typecheck(T(i=42, s='lol'))
+    assert not typecheck(T(i='lol', s='lol'))
+    assert not typecheck(T(i=42, s=42))
