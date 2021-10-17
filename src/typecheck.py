@@ -48,8 +48,7 @@ def type_guard(f):
 
 
 def typecheck(o: typing.Any, hint=None) -> bool:
-    origin = typing.get_origin(hint)
-    if origin:
+    if origin := typing.get_origin(hint):
         if origin is typing.Union:
             return any(typecheck(o, h) for h in typing.get_args(hint))
         elif issubclass(origin, typing.Mapping):
