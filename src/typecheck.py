@@ -25,8 +25,14 @@ def _check_mapping_style(o, hint):
 
 
 def _check_tuple_style(o, hint):
-    t = typing.get_args(hint)
-    return all([typecheck(o[i], a) for i, a in enumerate(t)])
+    args = typing.get_args(hint)
+    print(args)
+    if len(args) == 0:
+        return isinstance(o, hint)
+    elif len(args) == 2 and args[1] == Ellipsis:
+        return all([typecheck(e, args[0]) for e in o])
+    else:
+        return quacks(o, hint) and all([typecheck(o[i], a) for i, a in enumerate(args)])
 
 
 def _check_list_style(o, hint):
@@ -71,7 +77,7 @@ def typecheck(o: typing.Any, hint=None) -> bool:
                 return _check_list_style(o, hint)
         else:
             return quacks(o, hint)
-    elif type(hint) == type and hint in (str, int, bool, bytes, list, dict):
+    elif type(hint) == type and hint in (str, int, bool, bytes, list, dict, tuple):
         return isinstance(o, hint)
     elif hint == type(None):  # noqa
         return o is None
