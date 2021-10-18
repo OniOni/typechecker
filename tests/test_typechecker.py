@@ -156,7 +156,10 @@ def test_tuple():
     assert typecheck(t, typing.Tuple[int, str, bool])
     assert typecheck(t, tuple)
     assert typecheck(t, typing.Tuple)
+    assert not typecheck(t, tuple[int, ...])
 
     t = (1, 2, 3)
     assert typecheck(t, tuple[int, ...])
     assert typecheck(t, typing.Tuple[int, ...])
+    assert not typecheck(t, tuple[str, ...])
+    assert not typecheck(t, typing.Tuple[str, ...])
