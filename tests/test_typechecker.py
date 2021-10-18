@@ -133,3 +133,18 @@ def test_union():
     assert typecheck(42, T)
     assert typecheck('lol', T)
     assert not typecheck(b'lol', T)
+
+
+def test_list():
+    l = [1, 2, 3]
+    assert typecheck(l, typing.List[int])
+    assert typecheck(l, typing.List)
+    assert typecheck(l, list[int])
+    assert typecheck(l, list)
+    assert typecheck(l, typing.Iterable[int])
+    assert typecheck(l, typing.Iterable)
+
+    l = ["a", "b", "c"]
+    assert not typecheck(l, typing.List[int])
+    assert not typecheck(l, list[int])
+    assert not typecheck(l, typing.Iterable[int])
