@@ -26,7 +26,6 @@ def _check_mapping_style(o, hint):
 
 def _check_tuple_style(o, hint):
     args = typing.get_args(hint)
-    print(args)
     if len(args) == 0:
         return isinstance(o, hint)
     elif len(args) == 2 and args[1] == Ellipsis:
