@@ -149,6 +149,9 @@ def test_list():
     assert not typecheck(l, list[int])
     assert not typecheck(l, typing.Iterable[int])
 
+    l = (1, 2, 3)
+    assert not typecheck(l, typing.List[int])
+
 
 def test_tuple():
     t = (1, "a", True)
@@ -163,3 +166,6 @@ def test_tuple():
     assert typecheck(t, typing.Tuple[int, ...])
     assert not typecheck(t, tuple[str, ...])
     assert not typecheck(t, typing.Tuple[str, ...])
+
+    t = [1, 2, 3]
+    assert not typecheck(t, tuple[int, ...])
