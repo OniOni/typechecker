@@ -38,6 +38,11 @@ cmd = 'venv/bin/flake8 src/'
 watch = ['py']
 upstream = ['deps']
 
+[task.bandit]
+cmd = 'venv/bin/bandit -r src'
+watch = ['py']
+upstream = ['deps']
+
 [task.dev-install]
 cmd = 'venv/bin/pip install -e .'
 watch = ['py']
