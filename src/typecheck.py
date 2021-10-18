@@ -76,7 +76,7 @@ def typecheck(o: typing.Any, hint=None) -> bool:
                 return isinstance(o, origin) and _check_list_style(o, hint)
         else:
             return isinstance(o, origin) and quacks(o, hint)
-    elif type(hint) == type and hint in (str, int, bool, bytes, list, dict, tuple):
+    elif type(hint) == type and hint in (str, int, bool, bytes, list, dict, tuple, set):
         return isinstance(o, hint)
     elif hint == type(None):  # noqa
         return o is None
