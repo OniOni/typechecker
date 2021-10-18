@@ -38,6 +38,11 @@ cmd = 'venv/bin/flake8 src/'
 watch = ['py']
 upstream = ['deps']
 
+[task.bandit]
+cmd = 'venv/bin/bandit -q -r src'
+watch = ['py']
+upstream = ['deps']
+
 [task.dev-install]
 cmd = 'venv/bin/pip install -e .'
 watch = ['py']
@@ -49,10 +54,10 @@ upstream = ['deps', 'dev-install']
 watch = ['py']
 
 [group.qa]
-upstream = ['black', 'isort', 'flake8']
-
-[group.dev]
-upstream = ['qa', 'test']
+upstream = ['black', 'isort', 'flake8', 'bandit']
 
 [group.ci]
-upstream = ['flake8', 'test']
+upstream = ['flake8', 'bandit', 'test']
+
+[group.dev]
+upstream = ['qa', 'ci']

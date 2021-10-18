@@ -102,7 +102,7 @@ def test_guard_bad():
     def f(a: int, b: str, c: bool = False):
         return True
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         f(42, 42)
 
 
