@@ -50,7 +50,8 @@ def type_guard(f):
         (bind := inspect.signature(f).bind(*a, **k)).apply_defaults()
         hints = typing.get_type_hints(f)
 
-        if not all([typecheck(bind.arguments[k], v) for k, v in hints.items()])
+        if not all([typecheck(bind.arguments[k], v) for k, v in hints.items()]):
+            raise TypeError()
 
         return f(*a, *k)
 
