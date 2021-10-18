@@ -39,7 +39,7 @@ watch = ['py']
 upstream = ['deps']
 
 [task.bandit]
-cmd = 'venv/bin/bandit -r src'
+cmd = 'venv/bin/bandit -q -r src'
 watch = ['py']
 upstream = ['deps']
 
