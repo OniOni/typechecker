@@ -152,8 +152,11 @@ def test_list():
 
 def test_tuple():
     t = (1, "a", True)
-
     assert typecheck(t, tuple[int, str, bool])
     assert typecheck(t, typing.Tuple[int, str, bool])
     assert typecheck(t, tuple)
     assert typecheck(t, typing.Tuple)
+
+    t = (1, 2, 3)
+    assert typecheck(t, tuple[int, ...])
+    assert typecheck(t, typing.Tuple[int, ...])
