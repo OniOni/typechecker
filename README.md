@@ -1,3 +1,3 @@
-[![Build Status](https://travis-ci.org/OniOni/typechecker.svg?branch=master)](https://travis-ci.org/OniOni/typechecker)
+![CI Status](https://github.com/OniOni/typechecker/actions/workflows/main.yml/badge.svg?branch=main)
 
 # typechecker
