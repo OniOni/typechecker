@@ -30,6 +30,9 @@ def _check_tuple_style(o, hint):
 
 
 def _check_list_style(o, hint):
+    if not quacks(o, hint):
+        return False
+
     args = typing.get_args(hint)
     if len(args) == 0:
         return isinstance(o, hint)
@@ -60,10 +63,11 @@ def typecheck(o: typing.Any, hint=None) -> bool:
             return any(typecheck(o, h) for h in typing.get_args(hint))
         elif issubclass(origin, typing.Mapping):
             return _check_mapping_style(o, hint)
-        elif issubclass(origin, typing.MutableSequence):
-            return _check_list_style(o, hint)
-        elif issubclass(origin, typing.Sequence):
-            return _check_tuple_style(o, hint)
+        elif issubclass(origin, typing.Sequence) or issubclass(origin, typing.Iterable):
+            if origin in (tuple, typing.Tuple):
+                return _check_tuple_style(o, hint)
+            else:
+                return _check_list_style(o, hint)
         else:
             return quacks(o, hint)
     elif type(hint) == type and hint in (str, int, bool, bytes, list, dict):
