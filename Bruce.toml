@@ -1,7 +1,12 @@
-[glob.py]
+[glob.src]
 fingerprintingstrategy = 'content'
-glob = '**/*.py'
-exclude = ['.*venv.*', '\.bruce/.*']
+glob = 'src/*.py'
+exclude = []
+
+[glob.tests]
+fingerprintingstrategy = 'content'
+glob = 'tests/*.py'
+exclude = []
 
 [file.reqs]
 fingerprintingstrategy = 'content'
@@ -25,33 +30,33 @@ upstream = ['init']
 
 [task.black]
 cmd = 'venv/bin/black src/ --exclude venv bruce.py'
-watch = ['py']
+watch = ['src']
 upstream = ['deps']
 
 [task.isort]
 cmd = 'venv/bin/isort --skip venv --ac src/ bruce.py'
-watch = ['py']
+watch = ['src']
 upstream = ['deps']
 
 [task.flake8]
 cmd = 'venv/bin/flake8 src/'
-watch = ['py']
+watch = ['src']
 upstream = ['deps']
 
 [task.bandit]
 cmd = 'venv/bin/bandit -q -r src'
-watch = ['py']
+watch = ['src']
 upstream = ['deps']
 
 [task.dev-install]
 cmd = 'venv/bin/pip install -e .'
-watch = ['py']
+watch = ['src']
 upstream = ['init']
 
 [task.test]
 cmd = 'venv/bin/pytest'
 upstream = ['deps', 'dev-install']
-watch = ['py']
+watch = ['tests', 'src']
 
 [group.qa]
 upstream = ['black', 'isort', 'flake8', 'bandit']
