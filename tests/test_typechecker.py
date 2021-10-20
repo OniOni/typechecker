@@ -182,3 +182,13 @@ def test_tuple():
 
     t = [1, 2, 3]
     assert not typecheck(t, tuple[int, ...])
+
+
+def test_mapping():
+    m = {'k': 42}
+    assert typecheck(m, dict[str, int])
+    assert typecheck(m, typing.Dict[str, int])
+    assert typecheck(m, typing.Mapping[str, int])
+    assert typecheck(m, dict)
+    assert typecheck(m, typing.Dict)
+    assert typecheck(m, typing.Mapping)
