@@ -18,10 +18,20 @@ def quacks(o, hint) -> bool:
 
 
 def _check_mapping_style(o, hint):
-    key_type, value_type = typing.get_args(hint)
-    return all(
-        [typecheck(k, key_type) and typecheck(v, value_type) for k, v in o.items()]
-    )
+    if not quacks(o, hint):
+        return False
+
+    args = typing.get_args(hint)
+    if len(args) == 0:
+        return isinstance(o, hint)
+    elif len(args) == 2:
+        return all(
+            [typecheck(k, args[0]) and typecheck(v, args[1]) for k, v in o.items()]
+        )
+    else:
+        raise TypeError(
+            f"Wrong number of parametres for {hint}; actual {len(args)}, expected 2."
+        )
 
 
 def _check_tuple_style(o, hint):
