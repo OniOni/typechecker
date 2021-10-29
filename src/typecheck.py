@@ -71,7 +71,7 @@ def type_guard(f):
             raise TypeError()
 
         ret = f(*a, *k)
-        if not typecheck(ret, hints["return"]):
+        if "return" in hints and not typecheck(ret, hints["return"]):
             raise TypeError()
 
         return ret
