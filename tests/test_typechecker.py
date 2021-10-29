@@ -106,10 +106,20 @@ def test_guard_bad():
         f(42, 42)
 
 
+def test_guard_return_bad():
+
+    @type_guard
+    def f(a: int, b: str, c: bool = False) -> int:
+        return True
+
+    with pytest.raises(TypeError):
+        f(42, 42)
+
+
 def test_guard():
 
     @type_guard
-    def f(a: int, b: str, c: bool = False):
+    def f(a: int, b: str, c: bool = False) -> bool:
         return True
 
     assert f(42, 'lol')
