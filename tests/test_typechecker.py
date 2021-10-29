@@ -116,6 +116,15 @@ def test_guard_return_bad():
         f(42, 42)
 
 
+def test_guard_no_return():
+
+    @type_guard
+    def f(a: int, b: str, c: bool = False):
+        return True
+
+    f(42, 'lol')
+
+
 def test_guard():
 
     @type_guard
