@@ -154,6 +154,14 @@ def test_union():
     assert not typecheck(b'lol', T)
 
 
+def test_optional():
+    T = typing.Optional[int]
+
+    assert typecheck(42, T)
+    assert typecheck(None, T)
+    assert not typecheck('lol', T)
+
+
 def test_list():
     l = [1, 2, 3]
     assert typecheck(l, typing.List[int])
